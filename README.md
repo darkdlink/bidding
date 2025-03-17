@@ -1,7 +1,7 @@
 # bidding
 sistema de capitalização de licitações
 
-Desenvoolvido em PHP / Laravel | JavaScript / Vue.js | Docker
+Desenvoolvido em PHP / Laravel | JavaScript / Vue.js | Docker | Banco SQL
 
 Bidding é um sistema de capitalização de licitações desenvolvido utilizando as seguintes tecnologias:
 
