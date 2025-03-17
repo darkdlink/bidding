@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  # Serviço para o backend (Laravel)
+  backend:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: bidding-backend
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - database
+      - redis
+    networks:
+      - bidding-network
+
+  # Serviço para o frontend (Vue.js)
+  frontend:
+    build:
+      context: ./docker/node
+      dockerfile: Dockerfile
+    container_name: bidding-frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8080:8080"
+    command: npm run serve
+    networks:
+      - bidding-network
+
+  # Servidor web (Nginx)
+  webserver:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: bidding-webserver
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - backend
+    networks:
+      - bidding-network
+
+  # Banco de dados (MySQL)
+  database:
+    image: mysql:8.0
+    container_name: bidding-database
+    environment:
+      MYSQL_DATABASE: bidding
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: bidding
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - bidding-network
+
+  # Cache (Redis)
+  redis:
+    image: redis:alpine
+    container_name: bidding-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - bidding-network
+
+networks:
+  bidding-network:
+    driver: bridge
+
+volumes:
+  dbdata:
