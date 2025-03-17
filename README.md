@@ -25,7 +25,7 @@ A utilização de PHP/Laravel no backend garante um desenvolvimento ágil e esca
 
 
 
-1. Estratégias de desenvolvimento, arquitetura e justificativa das tecnologias
+#1. Estratégias de desenvolvimento, arquitetura e justificativa das tecnologias
 Estratégia de Desenvolvimento
 
 Desenvolvimento Ágil: Metodologia Scrum com sprints semanais para iterações mais rápidas e feedback constante.
@@ -70,7 +70,7 @@ Simplificação do processo de deployment
 
 
 
-2. Plano de Trabalho (3 meses)
+#2. Plano de Trabalho (3 meses)
 Semana 1: Planejamento e Setup
 
 Definição detalhada do escopo do MVP
