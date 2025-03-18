@@ -125,3 +125,112 @@ Recursos Necessários
 
 Serviços: Hospedagem em nuvem, repositório Git, ferramentas de controle de projeto
 Hardware: Estações de trabalho adequadas para desenvolvimento
+
+# Requisitos Funcionias
+
+Gestão de Usuários e Perfis
+
+Cadastro e autenticação de usuários
+Diferentes níveis de acesso (administrador, gestor, analista, visualizador)
+Gerenciamento de permissões por módulo
+
+
+Cadastro e Gestão de Licitações
+
+Registro de editais com campos estruturados
+Upload e gerenciamento de documentos relacionados
+Classificação e categorização de licitações
+Registro de requisitos específicos da licitação
+Envio de email com as principais licitações abertas
+Busca por licitações no site
+
+
+Cronograma e Controle de Prazos
+
+Calendário de licitações com datas importantes
+Sistema de lembretes e alertas automáticos
+Visualização de linha do tempo da licitação
+
+Acompanhamento de Processos
+
+Registro de status da licitação (em análise, proposta enviada, ganho, perdido)
+Histórico de comunicações e ações tomadas
+Registro de motivos de desclassificação ou perda
+
+Dashboard Analítico
+
+Visão geral de licitações ativas e seu status
+Métricas de desempenho e taxa de sucesso
+Gráficos de distribuição por órgão, valor e categoria
+
+Geração de Relatórios
+
+Relatórios de performance e participação
+Exportação de dados em formatos diversos (PDF, Excel)
+Relatórios comparativos entre períodos
+
+
+Notificações e Alertas
+
+Notificações por e-mail/sistema sobre prazos críticos
+Alertas sobre novas oportunidades de licitação
+Notificações de alterações em editais
+
+# Requisitos Não Funcionais
+
+Desempenho
+
+Tempo de resposta inferior a 2 segundos para operações regulares
+Capacidade para processar simultaneamente múltiplas simulações
+Suporte a pelo menos 50 usuários simultâneos
+
+
+Segurança
+
+Criptografia de dados sensíveis
+Autenticação segura com opção de dois fatores
+Registro de logs de acesso e alterações (auditoria)
+Proteção contra injeção SQL e ataques comuns
+
+
+Usabilidade
+
+Interface responsiva para acesso via desktop e dispositivos móveis
+Design intuitivo com fluxos de trabalho otimizados
+Guias contextuais de ajuda e tooltips
+
+
+Disponibilidade
+
+Disponibilidade mínima de 99,5% em horário comercial
+Plano de contingência para falhas
+Backups automáticos diários
+
+
+Escalabilidade
+
+Arquitetura que permita crescimento do número de usuários
+Capacidade de expansão para novos módulos
+Otimização para aumento de volume de dados
+
+
+Manutenibilidade
+
+Código documentado seguindo padrões
+Estrutura modular facilitando manutenção
+Ambiente de teste separado
+
+
+Interoperabilidade
+
+APIs RESTful para possíveis integrações
+Suporte a importação/exportação de dados em formatos padrão
+Capacidade de integração com sistemas de e-mail e calendário
+
+
+Conformidade
+
+Adequação à LGPD para tratamento de dados pessoais
+Registro de consentimento de usuários
+Atendimento a requisitos legais específicos de licitações
+
