@@ -13,7 +13,7 @@ Infraestrutura: Docker para conteinerização e portabilidade.
 
 Em essência, a aplicação visa facilitar e organizar o processo de licitações, provavelmente permitindo o gerenciamento de propostas, acompanhamento de prazos, controle financeiro e comunicação entre os envolvidos. O nome "sistema de capitalização de licitações" pode sugerir funcionalidades como:
 
-Registro e organização de licitações: Armazenar informações relevantes de cada licitação, como edital, prazos, requisitos, etc.
+Coleta, registro e organização de licitações: Coletar (por meio de scraping) e Armazenar informações relevantes de cada licitação, como edital, prazos, requisitos, etc.
 
 Cálculo e simulação de propostas: Ferramentas para auxiliar na elaboração de propostas competitivas, considerando custos, margem de lucro e outros fatores.
 
