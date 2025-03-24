@@ -1,0 +1,67 @@
+CREATE DATABASE bidding_system;
+USE bidding_system;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'analyst', 'manager', 'external') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE biddings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    publication_date DATE NOT NULL,
+    deadline_date DATE NOT NULL,
+    status ENUM('open', 'closed', 'in_progress', 'canceled') NOT NULL,
+    estimated_value DECIMAL(15,2),
+    modality ENUM('pregao', 'tomada_preco', 'concorrencia', 'convite') NOT NULL,
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+CREATE TABLE proposals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bidding_id INT NOT NULL,
+    user_id INT NOT NULL,
+    total_value DECIMAL(15,2) NOT NULL,
+    profit_margin DECIMAL(5,2),
+    status ENUM('draft', 'submitted', 'accepted', 'rejected') NOT NULL,
+    technical_score DECIMAL(5,2),
+    financial_score DECIMAL(5,2),
+    submitted_at TIMESTAMP,
+    FOREIGN KEY (bidding_id) REFERENCES biddings(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE bidding_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bidding_id INT NOT NULL,
+    description TEXT NOT NULL,
+    quantity INT NOT NULL,
+    estimated_unit_price DECIMAL(10,2),
+    FOREIGN KEY (bidding_id) REFERENCES biddings(id)
+);
+
+CREATE TABLE documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bidding_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    type ENUM('edict', 'technical_reference', 'proposal', 'contract') NOT NULL,
+    uploaded_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (bidding_id) REFERENCES biddings(id),
+    FOREIGN KEY (uploaded_by) REFERENCES users(id)
+);
+
+CREATE INDEX idx_bidding_status ON biddings(status);
+CREATE INDEX idx_proposal_status ON proposals(status);
+CREATE INDEX idx_user_email ON users(email);
