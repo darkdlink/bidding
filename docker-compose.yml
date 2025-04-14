@@ -1,78 +1,136 @@
-version: '3'
 
 services:
-  # Serviço para o backend (Laravel)
-  backend:
+  # Serviço de aplicação Laravel
+  app:
     build:
-      context: ./docker/php
+      context: ./docker/app
       dockerfile: Dockerfile
-    container_name: bidding-backend
+    container_name: bidding-app
+    restart: unless-stopped
+    working_dir: /var/www/
     volumes:
-      - ./backend:/var/www/html
-    depends_on:
-      - database
-      - redis
+      - ./backend:/var/www
+      - ./docker/app/php.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - bidding-network
+    depends_on:
+      - db
+      - redis
 
-  # Serviço para o frontend (Vue.js)
-  frontend:
+  # Servidor Web Nginx
+  webserver:
+    image: nginx:alpine
+    container_name: bidding-webserver
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - bidding-network
+    depends_on:
+      - app
+
+  # Cliente Vue.js
+  client:
     build:
-      context: ./docker/node
+      context: ./frontend
       dockerfile: Dockerfile
-    container_name: bidding-frontend
+    container_name: bidding-client
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     ports:
       - "8080:8080"
+    networks:
+      - bidding-network
     command: npm run serve
-    networks:
-      - bidding-network
 
-  # Servidor web (Nginx)
-  webserver:
-    build:
-      context: ./docker/nginx
-      dockerfile: Dockerfile
-    container_name: bidding-webserver
-    ports:
-      - "80:80"
-    volumes:
-      - ./backend:/var/www/html
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - backend
-    networks:
-      - bidding-network
-
-  # Banco de dados (MySQL)
-  database:
+  # Banco de dados MySQL
+  db:
     image: mysql:8.0
-    container_name: bidding-database
+    container_name: bidding-db
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: bidding
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: bidding
-      MYSQL_PASSWORD: secret
-    ports:
-      - "3306:3306"
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
     volumes:
       - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - bidding-network
+    ports:
+      - "3306:3306"
 
-  # Cache (Redis)
+  # Redis para cache e filas
   redis:
     image: redis:alpine
     container_name: bidding-redis
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
     networks:
       - bidding-network
+    ports:
+      - "6379:6379"
 
+  # Serviço de Scraping (Worker)
+  scraper:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    container_name: bidding-scraper
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./backend:/var/www
+    networks:
+      - bidding-network
+    depends_on:
+      - app
+      - db
+      - redis
+    command: php artisan queue:work --queue=scraper
+
+  # Painel de administração do Redis
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: bidding-redis-commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - bidding-network
+    depends_on:
+      - redis
+
+  # PhpMyAdmin para gerenciamento do banco de dados
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: bidding-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8082:80"
+    networks:
+      - bidding-network
+    depends_on:
+      - db
+
+# Network
 networks:
   bidding-network:
     driver: bridge
 
+# Volumes
 volumes:
   dbdata:
+    driver: local
